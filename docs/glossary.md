@@ -1,0 +1,24 @@
+# Glossary
+- **L1** -  refers to the Layer 1 - the main Ethereum blockchain governed and secured by the Ethereum consensus algorithm. It's the base layer of the ecosystem where transactions are validated and blocks are added to the blockchain.
+- **L1 Validator** -  node or entity that participates in the consensus mechanism of the L1. Validators play a crucial role in maintaining the security and integrity of the blockchain by validating and adding new blocks of transactions to the blockchain.
+- **L1 Proposer** - a node or entity responsible for proposing new blocks of transactions to be added to the blockchain.
+- **Proposer Lookahead** - a feature of the L1 consensus algorithm allowing the actors within the network to anticipate the upcomming proposers in advance.
+- **L2** - refers to Layer 2 network - a network aiming to enhance the scalability, speed, and functionality of the L1 by processing transactions off-chain while still benefiting from the security and decentralization of the Layer 1 network.
+- **Rollup** - L2 solution bundling multiple transactions into a single transaction, which is then submitted to the L1 for data availability.
+- **L2 Sequencing** - refers to the process of arranging, ordering transactions or events in a specific order within a block or transactions list and submitting them to the L1
+- **L2 Sequencer** - the actor performing the sequencing
+- **Based Sequencing** - specific form of sequencing driven by the base L1, and the L1 proposer acts as L2 sequencer within their L1 slot.
+- **Liveness fault** - a misbehaviour by the L2 sequencer characterised with missed enforcement
+- **Safety fault** - a misbehaviour by the L2 sequencer characterised with enforcing validity conditions that do not honour the preconfirmation commitment.
+- **Preconfirmation** -  - an early commitment of transaction inclusion and/or execution, requested by the user and committed to by an actor having full or partial monopoly on the next L2 sequence.
+- **Inclusion Preconfirmation** - a preconfirmation that a transaction will be included in the next rollup sequence
+- **State Preconfirmation** - a preconfirmation that a transaction will be included in the next rollup sequence and commitment to the resulting post state. 
+- **Preconfirmation Reneging** - refers to the actor commiting to the preconfirmation not honouring their promise.
+- **Proposer-Builder Separation (PBS)** -  a concept in blockchain protocol design that refers to the separation of roles between block proposers and block builders. This concept is particularly relevant in protocols that use a consensus mechanism where different entities can be responsible for proposing new blocks and actually constructing them.
+- **Block Building Pipeline** - refers to the series of steps and actors involved in constructing a new block in a blockchain network. This process typically includes several stages from collecting transactions to broadcasting the completed block to the network. 
+- **L1 Pipeline** - refers to the block building pipeline for L1.
+- **L2 Pipeline** - refers to the block building pipeline for L2.
+- **MEV-Boost** - a software ran by the proposers participating in the block building pipeline.
+- **Builder** - within the context of the block building pipeline, builder refers to an actor performing the task of collecting and ordering transactions into a block.
+- **Relay** - an actor within the block building pipeline tasked with mediating between the proposers and the builders.
+- **Composability** - refers to the ability of various L2s/Rollups to seamlessly interact and interoperate with each other.
