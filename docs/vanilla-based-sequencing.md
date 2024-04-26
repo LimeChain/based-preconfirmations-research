@@ -1,5 +1,8 @@
 # Vanilla Based Sequencing
 
+[![hackmd-github-sync-badge](https://hackmd.io/JeLKP_pVQMe-_J-kpb3MkQ/badge)](https://hackmd.io/JeLKP_pVQMe-_J-kpb3MkQ)
+
+
 # TLDR
 
 Vanilla Based Sequencing is a design for decentralised sequencing mechanism for rollups led by the L1 proposers. Its main goals are:
@@ -9,19 +12,17 @@ Vanilla Based Sequencing is a design for decentralised sequencing mechanism for 
 - Enable composability with other rollups without the requirement to trust a single centralised sequencing layer
 - Base its liveness guarantees on the Ethereum L1.
 - Remove the need of trust towards a single party and ensure a sizable and diverse set of sequencers, so that within an acceptable timeframe a censored transactions will reach an honest sequencer that will be willing to sequence this transaction.
-- Addresses cold-start problem of original based sequencing through naturally higher incentives for early participants.
+- Addresses cold-start problem of original [based sequencing](https://ethresear.ch/t/based-rollups-superpowers-from-l1-sequencing/15016) through naturally higher incentives for early participants.
 
-In the design sequencing is done by L1 proposers that have opted-in to participate as L2 sequencers and be punished for misbehaviour. The default L2 sequencer is the current slot L1 proposer. If the current L1 proposer has not opted-in to be part of the rollup protocol, another opted-in L1 proposer is chosen at random to replace them.
+In the design, L2 sequencing is performed by L1 proposers that have opted-in to participate as L2 sequencers and be punished for misbehaviour. The default L2 sequencer is the current slot L1 proposer. If the current L1 proposer has not opted-in to be a part of the rollup protocol, another opted-in L1 proposer is chosen at random to replace them.
 
-The L2 sequencers have monopoly power over the rollup slot and are able to provide service to the users with quality on par with centralised sequencing. 
-
-Furthermore, the rollup protocol is able to make revenue as a commission fee of the L2 sequencer profit.
+The L2 sequencers have monopoly power over the rollup sequences during this L1 slot and are able to provide services (i.e. preconfirmations) to the users with quality on par with centralised sequencing. 
 
 # Goals of Decentralised Sequencing
 
 The majority of the current Ethereum rollup landscape consists of rollups with centralised and/or permissioned sequencing. These centralised sequencing layers both introduce trust assumptions and improve user experience. 
 
-The goal of a decentralised sequencing protocol would be to address the negatives, while maintaining or improving the positives that the centralised sequencing offers.
+The goal of a decentralised sequencing protocol would be to address the negatives, while maintaining or improving the positives that centralised sequencing offers.
 
 ## Secure without UX Sacrifices
 
@@ -37,11 +38,11 @@ A goal for decentralised sequencing design would be to enable a rollup protocol 
 
 Current rollups with centralised sequencer generates revenue from the transactions fees in their rollups.
 
-A goal for a decentralised sequencing design would be to enable all the participating actors, including the rollup protocol itself, to generate profit.
+A goal for a decentralised sequencing design would be to enable all the participating actors, including the rollup protocol itself, to be profitable.
 
 ## Composability over Walled Gardens
 
-Rollups with centralised sequencing cannot offer synchronous composability with other rollups  and are forced to remain fragmented unless they opt into a single centralised shared sequencer. This can lead to multiple rollups having a single trusted centralised sequencer and further exacerbating the downsides of centralised sequencing.
+Rollups with centralised sequencing cannot offer synchronous composability with other rollups and are forced to remain fragmented unless they opt into a single centralised shared sequencer. This can lead to multiple rollups having a single trusted centralised sequencer and further exacerbating the downsides of centralised sequencing.
 
 A goal for a decentralised sequencing design would be to enable composability with other rollups without the requirement to trust a single centralised sequencing layer.
 
@@ -59,7 +60,7 @@ A goal for a decentralised sequencing design would be to remove the need of trus
 
 # Types of Decentralised Sequencing
 
-The major decision of a decentralised sequencing design is how is the next L2 sequencer selected. Two groups of design ideas are currently being explored by the rollup research community - “Free for all” and “Leader election”.
+The major decision of a decentralised sequencing design is the selection of the next L2 sequencer(s). Two groups of design ideas are currently being explored by the rollup teams - “Free for all” and “Leader election”.
 
 Free for all designs see the role of the sequencer as completely open at any time. In “Free for all” sequencing any user can act as sequencer and submit a sequencing transaction in L1. The order of inclusion in the L1 block of the (possibly multiple) sequencing transaction is decided by the L1 proposer and the L1 block building pipeline.
 
@@ -67,24 +68,24 @@ The leader election designs sees a single sequencer be elected to have monopoly 
 
 External sequencing sees the leader election to be performed through an external to L1 consensus algorithm. The rollup has its own set of participants that have opted to be part of the consensus algorithm (with its crypto-economical incentives - i.e. staking) for selection of the L2 sequencer.
 
-[Based sequencing](https://ethresear.ch/t/based-rollups-superpowers-from-l1-sequencing/15016) sees the leader role (L2 sequencer) be assigned to the current L1 proposer. In order to be part of the rollup protocol selection process the L1 proposers need to opt-in for additional slashing conditions for their L1 stake.
+Based sequencing sees the leader role (L2 sequencer) be assigned to the current L1 proposer. In order to be part of the rollup protocol selection process the L1 proposers need to opt-in for additional slashing conditions for their L1 stake.
 
 # Vanilla Based Sequencing
 
-This document outlines a design iteration over the based sequencing concept that aims to fulfil all the goals of decentralised sequencing. The main difference between the original based sequencing concept and the vanilla based sequencing concept is the protocol behaviour when the current L1 slot proposer has not opted-in to be an L2 sequencer.
+This document outlines a design iteration over the based sequencing concept that aims to fulfil all the outlined goals of decentralised sequencing. The main difference between the original based sequencing concept and the vanilla based sequencing concept is the protocol behaviour when the current L1 slot proposer has not opted-in to be an L2 sequencer.
 
-An important design consideration aimed by the design is to address the “cold start” problem - achieve the desired goals of decentralised sequencing even early when the participation of L1 proposers is low.
+An important design consideration aimed by the design is to address the “cold start” problem - achieve the desired goals of decentralised sequencing even early when the participation of L1 proposers is expected to be low.
 
-The following sections will review the three crucial design suggestions of Vanilla based sequencing design.
+The following sections will review the three crucial design suggestions of "vanilla based sequencing" design.
 
 ## L2 Sequencer Selection
 
-Vanilla based sequencing L2 sequencer selection starts with the same general idea as original based sequencing - that the L2 sequencer is the L1 proposer. In order for a L1 proposer to become eligible to be a certain rollup L2 sequencer, the L1 proposers would need to opt into additional slashing conditions - punishment for misbehaviour as a sequencer in the rollup.
+Vanilla based sequencing L2 sequencer selection starts with the same general idea as original based sequencing - that the L2 sequencer is the L1 proposer. In order for a L1 proposer to become eligible to be a certain rollup L2 sequencer, the L1 proposers would need to opt into slashing conditions - punishment for misbehaviour as a sequencer in the rollup.
 
 The design recognises that only a subset of the L1 proposers would opt-in to be L2 sequencer for the rollup. This nuance requires the mechanism to define the sequencer selection in the two possible scenarios:
 
 1. **Primary selection** - When the current L1 proposer has opted-in to be a L2 sequencer for the rollup (depicted in green)
-2. **Fallback selection** - When the current L1 proposer has not opted-in to be a L2 sequencer for the rollup (depicted in blue)
+2. **Fallback selection** - When the current L1 proposer has **not** opted-in to be a L2 sequencer for the rollup (depicted in blue)
 
 ![Preconfirmations-Vanilla Based Sequencing.drawio](https://hackmd.io/_uploads/ryYl14Wy0.png)
 
@@ -94,7 +95,7 @@ In the **primary selection** case the current L1 proposer has opted in to be a L
 
 ### Fallback Selection
 
-One drawback of the original based sequencing concept is the appearance of “sequencing gaps” - an L1 slot whose proposer has not opted-in to be L2 sequencer. These gaps lead unpredictably long sequencing time - the next opted-in L1 proposer might be beyond the current L1 lookahead. Such gaps result in rollup service degradation.
+One drawback of the original based sequencing concept is the appearance of “sequencing gaps” - an L1 slot whose proposer has not opted-in to be L2 sequencer. These gaps lead to an unpredictably long sequencing time - the next opted-in L1 proposer might be beyond the current L1 lookahead. Such gaps result in rollup service degradation.
 
 In the **fallback selection** case the current L1 proposer has **not** opted in to be a L2 sequencer (depicted in blue above). In order to fight sequencing gaps, an L1 proposer is drawn at random from the other opted-in L1 proposers and is assigned to be the L2 sequencer. As L2 sequencer the L1 proposer is able to get additional revenue from the transaction fees and extracted value from the rollup transactions.
 
@@ -106,7 +107,7 @@ In the diagram above we’ve equated one rollup slot - the time that a single L2
 
 Depending on the usage and mechanics of the rollups, some rollups might want to temporary or permanently lower the sequencing frequency by adjusting the rollup size to multiple L1 slots.
 
-In a rollup slot spanning multiple L1 slots, the sequencer selection criteria stays the same is applied only considering the last L1 slot of the rollup slot.
+In a rollup slot spanning multiple L1 slots, the sequencer selection criteria stays the same, but is applied only considering the last L1 slot of the rollup slot.
 
 ### Requirement for Punishment Mechanism in the protocol
 
@@ -115,19 +116,19 @@ Similarly to any type of sequencing, vanilla based sequencing requires the seque
 - **Staking** - requiring the l2 sequencers to post a stake that is slashed on misbehaviour. Flavours of this can be restaking - putting forward your ETH validator stake or delegated staking - allowing other users to post stake on the sequencer behalf.
 - **Bonding** - requiring the l2 sequencers post a stake every time they sequence and getting it back upon finality is reached and no misbehaviour is detected.
 
-In the context of vanilla based sequencing, the only important requirement is for such punishment mechanism to exist in order to disincentivise the sequencers to misbehave..
+In the context of vanilla based sequencing, the only important requirement is for such punishment mechanism to exist in order to disincentivise the sequencers to misbehave.
 
 ### Selection Mechanics
 
-Most of the selection mechanics is performed off-chain and is verified on-chain. This verification is part of the onchain sequencing process and is part of the logic of the smart contract that deals with sequencing for this rollup.
+Most of the selection mechanics is performed off-chain and is verified on-chain. This verification is part of the onchain sequencing process and is part of the logic of either the smart contract that deals with sequencing for this rollup or the finality mechanism.
 
-When a sequencing transaction is sent to the smart contract, it needs to differentiate between primary and secondary selection. This differentiation is as simple as check if the current L1 coinbase has opted-in to be a sequencer.
+First option is to have the selection performed in the L1 rollup smart contracts. The contracts need to verify the eligibility of the sequencer to be the current L2 sequencer. Due to lack of access of L1 execution layer to the **current** L1 proposer, this check needs to be performed as a separate transaction in subsequent L1 block, or an optimistic challenge mechanism needs to be employed.
 
-Within primary selection the rollup smart contract needs to require that the sequencing transaction originates from the current coinbase. 
+Second option is for the rollup to include verification of the correct selection of the sequencer within their finality mechanism - validty or fraud proof.
 
-Within fallback selection the rollup smart contract needs to perform a deterministic random selection of a L2 sequencer. Generally such selection can be very simple and efficient, and can be performed off-chain ahead of time. Example of such simple selection can be finding the next L2 sequencer index in the opted-in proposers group by modulo dividing the current L1 proposer address by the size of the opted-in L1 proposers group.
+In both cases the selection can be known in advanced based on the current L1 lookahead, and can be efficiently verified offchain.
 
-In both selection cases selection can be known in advanced based on the current L1 lookahead, and can be efficiently verified onchain.
+The mechanisms of opting-in and selection verification are subject of an [additional research document](https://github.com/LimeChain/based-preconfirmations-research/blob/main/docs/optin-mechanics.md).
 
 ### Transaction List Building Delegation
 
@@ -135,9 +136,9 @@ Being a sequencer for one or multiple rollups increases the sophistication requi
 
 In order to combat this war a transaction list building delegation mechanism is proposed on top of vanilla based sequencing rollup. **The vanilla based sequencing design can be fully functional without this delegation mechanism**, but will require increased sophistication of the L1 proposers.
 
-In a MEV-boost manner, the opted-in L1 proposers are offered the ability to delegate their transaction list building to a block-building pipeline.
+In a MEV-boost manner, the opted-in L1 proposers are offered the ability to delegate their transaction list building to a secondary block-building pipeline.
 
-The list building pipeline will be a subject of a separate research document.
+The list building pipeline is a subject of an [additional research document](https://github.com/LimeChain/based-preconfirmations-research/blob/main/docs/pipelines.md).
 
 ## Preconfirmations
 
@@ -158,24 +159,22 @@ Inclusion preconfirmations require simple checks of transaction validity - accou
 
 Execution state preconfirmation requires more sophistication to commit and price. Transactions prior to the target one can change the pre-execution state and make the desired post-state invalid, thus rendering the whole preconfirmation invalid. In practice this means that the sequencer must maintain and commit to an ordered list of transaction at the top of the list.
 
-### Preconfirmation Pricing
+In order to increase the UX usability and enable wallets to hide away complexity of retries in case of rejection or preconfirmation reneging, a `deadline` field is suggested. Such a field enables wallets to retry without the user re-signing the transaction.
 
-Both types of preconfirmations post a certain constraint on the transaction list that the sequencer can sequence. Such constraints limit to various degrees the value that the sequencer can extract from the sequence. Therefore both preconfirmations require additional payment by the user to the proposer in exchange for their guarantee - a preconfirmations tip. 
+Both types of preconfirmations post a certain constraint on the transaction list that the sequencer can sequence. Such constraints limit to various degrees the value that the sequencer can extract from the sequence. Therefore both preconfirmations require additional payment by the user to the proposer in exchange for their guarantee.
 
-The preconfirmation pricing is a subject of market price discovery by the sequencers and will be a subject of a separate research document.
+The mechanics of preconfirmations and their pricing are a subject of a [separate research document](https://github.com/LimeChain/based-preconfirmations-research/blob/main/docs/preconfirmations-for-vanilla-based-rollups.md).
 
 ## Rollup’s Revenue
 
-Transaction fees and MEV are the major value sources within a Rollup. All of them are captured at sequencing time (assuming the sequenced transactions can be finalised).
+Transaction fees and MEV are the two major value sources of rollup. All of them are captured at sequencing time (assuming the sequenced transactions can be finalised).
 
-In order to ensure that the protocol is generating revenue and is not forced into altruism, portion of the sequencing revenue must be captured by the rollup. The specific proportion and mechanics are design decisions of the rollups protocols themselves.
+In order to ensure that the protocol is generating revenue and is not forced into altruism, portion of the sequencing revenue is suggested to be captured by the rollup. The specific proportion and mechanics are design decisions of the rollups protocols themselves.
 
 ![sequencing-design-space-Value Flow.drawio](https://hackmd.io/_uploads/B1a4yVZy0.png)
 
 
-A simple example mechanism can see the rollup to embed a commission fee **Z%** over the L2 sequencer balance increase. Such commission fee is aligned with the success of the protocol, as more transactions indicate high quality service and lead to increased revenue for both the rollup and the sequencers.
-
-Another solution might be to use a dedicated token of the Rollup acting as a proxy of the underlying value coming from transaction fees and MEV.
+A simple example mechanism can see the rollup embeding a commission fee **Z%** over the L2 sequencer balance increase. **Such commission fee is aligned with the success of the protocol, as more transactions indicate high quality service and lead to increased revenue for both the rollup and the sequencers.**
 
 ## Universal Synchronous Composability
 
@@ -185,21 +184,21 @@ Assuming multiple rollups using the vanilla based sequencing design, USC can be 
 
 # Sequencer Violations
 
-Regardless of the selection type the sequencers have several ways to violate the protocol mechanisms. In order to disincentivise the violations and misbehaviour the rollups are required to embed punishment mechanisms (discussed in the Sequencer Selection section). In case of violations the sequencers are expected to be punished. 
+Regardless of the selection type the sequencers have several ways to violate the protocol. In order to disincentivise the violations and misbehaviour the rollups are required to embed punishment mechanisms (discussed in the Sequencer Selection section). In case of violations the sequencers are expected to be punished. 
 
-Bellow you can find a short list of violations and faults applicable specifically to vanilla based sequencing that the actors are expected be punished for. This is list is by no means exhaustive and rollups should adjust it to their specific design.
+Bellow you can find a short list of violations and faults applicable specifically to vanilla based sequencing that the actors are expected to be punished for. This is list is by no means exhaustive and rollups should adjust it to their specific design.
 
-## Sequencer Liveness  and Timeliness Faults
+## Sequencer Liveness and Timeliness Faults
 
 This violation is characterised by the L2 sequencer missing to get L1 sequencing transaction included within their rollup slot. This fault can be objectively proven by the L1 smart contract. 
 
-It is important to note that the cause in **primary** sequencing can only be attributed to the L1 proposer or its delegation pipeline. Within the context of **fallback** sequencing the liveness fault can be caused by the L2 sequencer inability to guarantee inclusion of the sequencing transaction of time due to lack of monopoly over the L1 slot. 
+It is important to note that the cause in **primary** sequencing can only be attributed to the L1 proposer or its delegation pipeline. Within the context of **fallback** sequencing the liveness fault can be caused by the L2 sequencer inability to guarantee inclusion of the sequencing transaction on time due to lack of monopoly over the L1 slot. 
 
-This difference might change the severity of the punishment to the L2 sequencer. Furthermore this is a risk that the fallback sequencers must account for and mitigate as much as possible - for example through increased L1 base tip on the sequencing transaction.
+This difference might change the severity of the punishment of the L2 sequencer. Furthermore this is a risk that the fallback sequencers must account for and mitigate as much as possible - for example through increased L1 base tip on the sequencing transaction.
 
 ## Preconfirmation Reneging
 
-This violation is characterised by the L2 sequencer reneging on their preconfirmation commitment. This specific way it can be proven to the L1 smart contracts is a subject to a wider document on preconfirmations.
+This violation is characterised by the L2 sequencer reneging on their preconfirmation commitment. The specific way it can be proven to the L1 smart contracts is a design decision of the rollup but [using a signed commitment is strongly suggested](https://github.com/LimeChain/based-preconfirmations-research/blob/main/docs/preconfirmations-for-vanilla-based-rollups.md#preconfirmation-commitment).
 
 # Requirements to be Vanilla Based Rollup
 
@@ -246,9 +245,8 @@ Rollups with centralised sequencing requires the users to trust them that they w
 
 Unlike centralised sequencing, vanilla based sequencing rollup censorship resistance increases with the increase of the set of L1 proposers opting in to be L2 sequencers. Due to their equivalence, the trust assumptions towards the L2 sequencers are similar to the ones placed on L1 proposers themselves. The diversity of the L1 proposers group and the clear economic incentives to opt-in makes no single sequencer a long-term single point of failure and lowers geopolitical and technological risks.
 
-# Further Research Avenues
+# Further Research Resources
 
-- L2 Sequencer Opt-in Mechanics, Sequencer Discovery, L2 Sequencer Communication
-- Preconfirmations - mechanics, pricing and delegation pipeline
-- L1 PBS pipeline required modifications
-- Transaction list building delegation pipeline
+- [Preconfirmations - mechanics, pricing](https://github.com/LimeChain/based-preconfirmations-research/blob/main/docs/preconfirmations-for-vanilla-based-rollups.md)
+- [L2 Sequencer Opt-in Mechanics, Sequencer Discovery, L2 Sequencer Communication](https://github.com/LimeChain/based-preconfirmations-research/blob/main/docs/optin-mechanics.md)
+- [L1 PBS pipeline required modifications](https://github.com/LimeChain/based-preconfirmations-research/blob/main/docs/pipelines.md)
