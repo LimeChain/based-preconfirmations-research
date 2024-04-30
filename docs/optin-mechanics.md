@@ -1,25 +1,28 @@
 # Sequencer Opt-In, Discovery and Communication
 
+[![hackmd-github-sync-badge](https://hackmd.io/Rnu28b-2TdS4Z4v9nMIQVQ/badge)](https://hackmd.io/Rnu28b-2TdS4Z4v9nMIQVQ)
+
+
 # TLDR
 
-- The L1 proposers opt-in to be sequencers via two-step process - register and activate. Sequencers are eligible to be selected as sequencers after some time delay from their activation.
-- Registration requires a signed message by the proposer validator BLS keypair in order to authenticate the request. Furthermore the registration requires a proof that the validator is still active.
-- Registered sequencers advertise an RPC url to be connected to and an execution layer address to be representing them when sequencing.
-- Sequencing transactions are accepted optimistically and rollups are to decide whether to enforce further sequencer eligibility validation for the sequencing or implement challenge period. If Ethereum L1 exposes a direct access from the execution layer to the L1 proposer BLS pubkey, the challenge period can be replaced with validation of the sequencer selection on submission.
-- If a L1 proposer exits the L1 validator set, a forced deactivation can be triggered by any actor.
+- The L1 proposers opt-in to be sequencers via a two-step process - register and activate. Sequencers are eligible to be selected as sequencers after some time delay from their activation.
+- Registration requires a signed message by the proposer validator BLS keypair in order to authenticate the request. Furthermore, the registration requires proof that the validator is still active.
+- Registered sequencers advertise an RPC URL to be connected to and an execution layer address to represent them when sequencing.
+- Sequencing transactions are accepted optimistically and rollups are to decide whether to enforce further sequencer eligibility validation for the sequencing or implement a challenge period. If Ethereum L1 exposes direct access from the execution layer to the L1 proposer BLS pubkey, the challenge period can be replaced with validation of the sequencer selection on submission.
+- If an L1 proposer exits the L1 validator set, a forced deactivation can be triggered by any actor.
 
 # Opt-in Mechanics
 
-In order for a L1 proposer to become eligible to be selected as sequencer of the rollup, they must register themselves as L2 sequencer. The registration process includes:
+In order for an L1 proposer to become eligible to be selected as a sequencer of the rollup, they must register themselves as an L2 sequencer. The registration process includes:
 
-- Register, advertise their RPC url, their validator BLS public key and their representing address.
+- Register, advertise their RPC URL, their validator BLS public key and their representing address.
 - Activation of the registered sequencer upon meeting rollup defined activation criteria (i.e. stake)
 
 Both these actions are performed onchain in  L1 through smart contracts.
 
 ## Sequencers Registry Contract
 
-The sequencer registry contract is the contract keeping track of the current registered sequencers, their metadata and their status.
+The sequencer registry contract is the contract keeping track of the currently registered sequencers, their metadata and their status.
 
 ```solidity
 interface ISequencerRegistry {
@@ -50,12 +53,12 @@ interface ISequencerRegistry {
      *     Rollup contracts will use the signer address when enforcing the primary or secondary selection.
      *     The signature must authenticate the validator and must be over an authorisation hash.
      *     The authorisation hash must be verifiable by the contract and must include a nonce in order to guard against replay attacks.
-     *     The nonce derivation is a decision of the implementer, but can be as simple an incremental counter.
+     *     The nonce derivation is a decision of the implementer but can be as simple as an incremental counter.
      *     The implementation MUST check if the authHash is a keccak256(protocol_version,contract_address,chain_id,nonce).
      *
-     *     @param signer - the secp256k1 wallet that will be represeting the sequencer via its signatures
-     *     @param metadata - metadata of the sequencer - including but not limited to version and endpoint url
-     *     @param authHash - the authorisation hash - keccak256(protocol_version,contract_address,chain_id,nonce). The authorisation signature was created through signing over these bytes.
+     *     @param signer - the secp256k1 wallet that will be representing the sequencer via its signatures
+     *     @param metadata - metadata of the sequencer - including but not limited to version and endpoint URL
+     *     @param authHash - the authorisation hash - keccak256(protocol_version,contract_address,chain_id,nonce). The authorisation signature was created by signing over these bytes.
      *     @param signature - the signature over the authHash performed by the validator key
      *     @param validatorProof - all the data needed to validate the existence of the validator in the state tree of the beacon chain
      */
@@ -72,9 +75,9 @@ interface ISequencerRegistry {
      *
      *     Authorised operation. Similar requirements apply as in `register`
      *
-     *     @param signer - the new wallet that will be represeting the sequencer via its signatures
-     *     @param metadata - the new metadata of the sequencer - including but not limited to version and endpoint url
-     *     @param authHash - the authorisation hash - keccak256(protocol_version,contract_address,chain_id,nonce). The authorisation signature was created through signing over these bytes.
+     *     @param signer - the new wallet that will be representing the sequencer via its signatures
+     *     @param metadata - the new metadata of the sequencer - including but not limited to version and endpoint URL
+     *     @param authHash - the authorisation hash - keccak256(protocol_version,contract_address,chain_id,nonce). The authorisation signature was created by signing over these bytes.
      *     @param signature - the signature over the authHash performed by the validator key
      */
     function changeRegistration(address signer, bytes calldata metadata, bytes32 authHash, bytes calldata signature)
@@ -95,7 +98,7 @@ interface ISequencerRegistry {
      *     Authorised operation. Similar requirements apply as in `register`.
      *     Implementers of the staking process must make sure that the sequencer is no longer active before withdrawal disbursal
      *
-     *     @param authHash - the authorisation hash - keccak256(protocol_version,contract_address,chain_id,nonce). The authorisation signature was created through signing over these bytes.
+     *     @param authHash - the authorisation hash - keccak256(protocol_version,contract_address,chain_id,nonce). The authorisation signature was created by signing over these bytes.
      *     @param signature - the signature over the authHash performed by the validator key
      */
     function deactivate(bytes32 authHash, bytes calldata signature) external;
@@ -103,7 +106,7 @@ interface ISequencerRegistry {
     /**
      *     Forcefully deactivates a sequencer.
      *
-     *     The caller must provide a proof that the validator is no longer active or has been slashed.
+     *     The caller must provide proof that the validator is no longer active or has been slashed.
      *
      *     @param pubkey - the validator a BLS12-381 public key - 48 bytes
      *     @param validatorProof - all the data needed to validate the existence and state of the validator in the state tree of the beacon chain
@@ -173,24 +176,24 @@ The implementations can choose what `authHash` is. A suggestion is `keccak256(pr
 
 The implementations must recover the 48 bytes BLS12 pub key - `pubkey` - of the caller through the signature recovery process over the `signature` and `authHash`. **Note that BLS signature recovery is not possible until [EIP-2573](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2537.md) is included (currently scheduled for Pectra).**
 
-Next, the contract must check the existence of the validator in the current validator set. The implementations can achieve that via two-step process:
+Next, the contract must check the existence of the validator in the current validator set. The implementations can achieve that via a two-step process:
 
 1. Obtaining the parent beacon chain hash tree root - `beaconRoot` through the contract at `BEACON_ROOTS_ADDRESS` introduced with EIP4788 in the Dencun upgrade for the slot specified through the `proofSlot` parameter.
 2. Verifying that the `pubkey` belongs to an active validator through [SSZ Merkle inclusion multiproofs](https://github.com/ethereum/consensus-specs/blob/fa09d896484bbe240334fa21ffaa454bafe5842e/ssz/merkle-proofs.md#merkle-multiproofs) with the `beaconRoot` and the provided `validatorProof`, and performing the checks of [is_slashable_validator](https://github.com/ethereum/consensus-specs/blob/fa09d896484bbe240334fa21ffaa454bafe5842e/specs/phase0/beacon-chain.md#is_active_validator) function specified in the consensus spec.
 
 ### Registration
 
-A L1 proposer can start the registration process by triggering the `register` method. This method requires authorisation and should comply with the authorisation protocol outlined above.
+An L1 proposer can start the registration process by triggering the `register` method. This method requires authorisation and should comply with the authorisation protocol outlined above.
 
 Upon successful check, the implementation must create an entry for the sequencer - `Sequencer`. It should associate its `signer` address and `metadata` bytes with the `pubkey`. The `signer` is the address that the new sequencer will use to operate. It will be the expected sender address when sequencing and committing to preconfirmations.
 
-The `metadata` is information about the sequencer and how the external parties can connect to it. It should include but is not limited to version and endpoint url.
+The `metadata` is information about the sequencer and how the external parties can connect to it. It should include but is not limited to version and endpoint URL.
 
 ### Activation
 
 A registered sequencer must activate before becoming eligible for selection. The separation between registration and activation allows the rollup protocol to embed specific activation rules. An example of such activation rules can be a minimum stake posted by the sequencer or activation delay.
 
-The activation is performed via the `activate` method. Implementers must check that the activation rules are met. Similarly to registration, mandatory check is that the validator is active. Additional checks might include calling a staking contract to check if stake has been posted. 
+The activation is performed via the `activate` method. Implementers must check that the activation rules are met. Similarly to registration, a mandatory check is that the validator is active. Additional checks might include calling a staking contract to check if a stake has been posted. 
 
 If all checks are passed the implementations must set the sequencer `activationBlock` to the current block number and include it in the list of sequencers.
 
@@ -202,19 +205,19 @@ In case a registered sequencer wants to change their registration - i.e. updatin
 
 In case a registered sequencer wants to stop being a sequencer they can call the authorised `deactivate` method. The implementations must change the sequencer `deactivationBlock` to the current block number so that interfacing contracts can enforce withdrawal timeouts.
 
-Note: While the sequencer is deactivated it can still be selected by the selection algorithms until deactivation timeout period passes. Deactivated selected sequencers will miss their slots.
+Note: While the sequencer is deactivated it can still be selected by the selection algorithms until the deactivation timeout period passes. Deactivated selected sequencers will miss their slots.
 
 ### Withdrawn Validators
 
-Having the sequencers be an active L1 validators is an important property of vanilla based sequencing. Within primary selection it ensures the highest level of censorship resistance over sequencing transaction inclusion. 
+Having the sequencers be active L1 validators is an important property of vanilla based sequencing. Within primary selection, it ensures the highest level of censorship resistance over sequencing transaction inclusion. 
 
-One possible corner-case scenario sees an opted-in sequencer exit the Ethereum validator set or be slashed. In order to cover for this case a publicly available function `forceDeactivation` is provided. The caller can supply a proof that the validator is no longer active. The implementations must change the sequencer `deactivationBlock` to the current block number.
+One possible corner-case scenario sees an opted-in sequencer exit the Ethereum validator set or be slashed. In order to cover this case a publicly available function `forceDeactivation` is provided. The caller can supply proof that the validator is no longer active. The implementations must change the sequencer `deactivationBlock` to the current block number.
 
-Note: While the sequencer is deactivated it can still be selected by the selection algorithms until deactivation timeout period passes. Deactivated selected sequencers will miss their slots.
+Note: While the sequencer is deactivated it can still be selected by the selection algorithms until the deactivation timeout period passes. Deactivated selected sequencers will miss their slots.
 
 ### Activation and Deactivation Timeout
 
-In order to ensure predictable lookahead sequencer queue, the randomness selection algorithm for fallback selection requires a stable total count of eligible validators during the lookahead period. This requires the enforcement of activation and deactivation timeouts. Choosing the number of blocks `X` timeout, effectively specifies the lookahead queue of proposers.
+In order to ensure a predictable lookahead sequencer queue, the randomness selection algorithm for fallback selection requires a stable total count of eligible validators during the lookahead period. This requires the enforcement of activation and deactivation timeouts. Choosing the number of blocks `X` timeout effectively specifies the lookahead queue of proposers.
 
 Implementations need to make sure that they respond to the `function eligibleCountAt(uint256 blockNum)` method considering both the `activationBlock` of newly activated sequencers and the activation timeout. 
 
@@ -236,15 +239,15 @@ In order to select the sequencer the `SequencerRegistry` contract provides two m
 
 ### Optimistic Selection Algorithm
 
-One of the major requirements of vanilla based rollups is to implement the primary and fallback sequencer selection algorithms. These are used by the sequencers to identify if and when they are selected to be sequencer in one of the two modes. 
+One of the major requirements of vanilla based rollups is to implement the primary and fallback sequencer selection algorithms. These are used by the sequencers to identify if and when they are selected to be the sequencer in one of the two modes. 
 
-An intuitive approach can see the L1 smart contracts requiring sequencing transactions from sequencers that are 1) not current L1 proposers in case of primary selection and 2) not the selected sequencer in case of fallback selection. Such an approach, however, is currently not implementable within the Ethereum L1 - there is lack of information within the execution layer about the current block proposer.
+An intuitive approach can see the L1 smart contracts requiring sequencing transactions from sequencers that are 1) not current L1 proposers in case of primary selection and 2) not the selected sequencer in case of fallback selection. Such an approach, however, is currently not implementable within the Ethereum L1 - there is a lack of information within the execution layer about the current block proposer.
 
 Firstly, the current proposer cannot be proven via SSZ multiproof due `BEACON_ROOTS_ADDRESS` being the bacon tree hash root of the parent block - thus the information about the current slot is not yet available.
 
 Secondly, the address available via the `COINBASE` opcode cannot be deterministically linked with the proposer. Since the merge this opcode returns the fee recipient set by the block builder, [but this is not necessarily the proposer](https://github.com/ethereum/execution-apis/blob/main/src/engine/paris.md#payload-building). 
 
-Both of these obstacles prohibits the rollup contracts to reject sequencing submissions in-flight. Implementation of such an approach requires an L1 hard fork to expose the current block proposer within the execution layer.
+Both of these obstacles prohibit the rollup contracts from rejecting sequencing submissions in-flight. Implementation of such an approach requires an L1 hard fork to expose the current block proposer within the execution layer.
 
 In order to tackle this, it is suggested to implement an optimistic selection - performing the selection algorithm off-chain while allowing for proving and/or punishing submissions by ineligible sequencers afterwards. There are several arguments for this choice.
 
@@ -254,13 +257,13 @@ Second, such an optimistic approach “optimises the happy path”. If the seque
 
 In order to account for malicious cases two workarounds can be chosen. 
 
-First option is to introduce challenge period (something existing in the optimistic rollups already). If a sequencer acts maliciously and submits sequencing transaction when not selected as a sequencer their submission can be proven ineligible (through SSZ merkle multiproof) and the sequencer can be punished and the challenger is rewarded.
+The first option is to introduce a challenge period (something existing in the optimistic rollups already). If a sequencer acts maliciously and submits a sequencing transaction when not selected as a sequencer their submission can be proven ineligible (through SSZ Merkle multiproof) and the sequencer can be punished and the challenger is rewarded.
 
-Second option is to introduce validation function in the subsequent blocks (or along-side the proving transaction for zk rollups). This transaction aims to provide eligibility proof (through SSZ merkle multiproof) for the sequencer - proving that they were the correctly selected sequencer.
+The second option is to introduce a validation function in the subsequent blocks (or alongside the proving transaction for zk rollups). This transaction aims to provide eligibility proof (through SSZ Merkle multiproof) for the sequencer - proving that they were the correctly selected sequencer.
 
-Both options introduce drawbacks to the sequencing flow, but are implementable immediately. It is suggested that if/when Ethereum L1 provides a way for the execution layer to access the current block proposer, the implementations switch to a safer validation approach.
+Both options introduce drawbacks to the sequencing flow but are implementable immediately. It is suggested that if/when Ethereum L1 provides a way for the execution layer to access the current block proposer, the implementations switch to a safer validation approach.
 
-Regardless of the chosen optimistic selection option, the two selection types require their distinct ways of proving eligibility/ineligibility. Within the context of the primary selection, the proof must be a SSZ multiproof that the sequencer is/is not the proposer of the slot that the sequencing transaction came in. Within the context of the fallback selection, the selection verification can be achieved deterministically by the L1 smart contracts through performing the deterministic fallback selection algorithm outlined in the previous section.
+Regardless of the chosen optimistic selection option, the two selection types require their distinct ways of proving eligibility/ineligibility. Within the context of the primary selection, the proof must be an SSZ multiproof that the sequencer is/is not the proposer of the slot that the sequencing transaction came in. Within the context of the fallback selection, the selection verification can be achieved deterministically by the L1 smart contracts by performing the deterministic fallback selection algorithm outlined in the previous section.
 
 ### Rollup Contract Requirements
 
@@ -272,19 +275,19 @@ Regardless of the chosen optimistic selection option, the two selection types re
 
 ## Staking and Interfacing with Staking Contracts
 
-Many rollups have their own sequencing contracts. This stake is normally used as crypto-economical incentive for correct behaviour. 
+Many rollups have their own sequencing contracts. This stake is normally used as a crypto-economical incentive for correct behaviour. 
 
 ### Interfacing with SequencingRegistry
 
-While staking is not a requirement for a rollup to be “Vanilla Based” (bonds can be utilized as-well) the suggested `SequencerRegistry` interface is designed with staking in mind.
+While staking is not a requirement for a rollup to be “Vanilla Based” (bonds can be utilized as well) the suggested `SequencerRegistry` interface is designed with staking in mind.
 
-Firstly, the separation between registration (performed via `register`) and activation (performed via `activate`) provides a useful entry point for staking contracts. The rollup staking contract can only permit the triggering of activate if the staking requirements are met.
+Firstly, the separation between registration (performed via `register`) and activation (performed via `activate`) provides a useful entry point for staking contracts. The rollup staking contract can only permit the triggering of `activate` if the staking requirements are met.
 
-Secondly, the `deactivationBlock` field within the `Sequencer` data enable the staking contracts to enforce withdrawal conditions.
+Secondly, the `deactivationBlock` field within the `Sequencer` data enables the staking contracts to enforce withdrawal conditions.
 
 ### Notes on Staking
 
-In this section you can find several important notes and considerations when implementing a rollup staking mechanism. 
+In this section, you can find several important notes and considerations when implementing a rollup staking mechanism. 
 
 Firstly, vanilla based sequencing is not dependent on the asset and amount being staked. It is the design decision of the rollup which asset and how much of it should be staked in order to meet the activation criteria. Furthermore, the rollup designers can opt for a more complex staking mechanism enabling stake delegation and/or validator restaking (i.e. EigenLayer-style restaking and LST).
 
@@ -292,7 +295,7 @@ Secondly, it is important to consider the time to finality when releasing the st
 
 # Sequencer Discovery & Communication
 
-Important part of the flow of interaction with a vanilla based rollup is the discovery of the subsequent sequencers. In this section it is outlined of the mechanism to discover and communicate with the subsequent sequencers.
+An important part of the flow of interaction with a vanilla based rollup is the discovery of the subsequent sequencers. In this section, it is outlined of the mechanism to discover and communicate with the subsequent sequencers.
 
 ## Sequencer Discovery
 
@@ -308,10 +311,10 @@ Last, the wallet must obtain the `metadata` information for the sequencer they w
 
 ## Sequencer Communication
 
-As part of the metadata the sequencers must communicate an RPC endpoint. This endpoint must be the RPC endpoint for transaction submission by the sequencer and the requests it should service should include, but are not limited to:
+As part of the metadata, the sequencers must communicate an RPC endpoint. This endpoint must be the RPC endpoint for transaction submission by the sequencer and the requests it should service should include, but are not limited to:
 
-- Sending raw transaction
+- Sending a raw transaction
 - Getting preconfirmation commitments or rejections
 - Any other rollup specific methods.
 
-As slots change, the sequencers URLs are going to change too. This is a complexity that is to be handled by the wallets software.
+As slots change, the sequencers URLs are going to change too. This is a complexity that is to be handled by the wallet software.
