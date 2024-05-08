@@ -11,6 +11,8 @@ Naturally this research also covers suggested sequencing mechanism that serves a
 - [Glossary](./docs/glossary.md) - a glossary with commonly used terms throughout the research.
 - [Vanilla Based Sequencing](./docs/vanilla-based-sequencing.md) - a decentralised sequencing and exploration serving as foundation for preconfirmations.
 - [Preconfirmations for Vanilla Based Rollups](./docs/preconfirmations-for-vanilla-based-rollups.md) - a high level mechanism design for preconfirmations support for vanilla based rollups.
+- [Block Building Pipelines & GMEV-Boost](./docs/pipelines.md) - outlins how the external block building pipeline for L1 and the various L2 block building pipelines can converge within the context of Vanilla Based Sequencing. Suggests generalised MEV-Boost replacement - GMEV-Boost.
+- [Opt-in Mechanism](./docs/optin-mechanics.md) - a high level mechanism design for L1 validators opting into being vanilla based rollup sequencer.
 
 # Authors
 - [George Spasov](https://github.com/Perseverance) - Limechain
