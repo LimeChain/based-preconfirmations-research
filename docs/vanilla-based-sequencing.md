@@ -116,7 +116,10 @@ Similarly to any type of sequencing, vanilla based sequencing requires the seque
 - **Staking** - requiring the l2 sequencers to post a stake that is slashed on misbehaviour. Flavours of this can be restaking - putting forward your ETH validator stake or delegated staking - allowing other users to post stake on the sequencer behalf.
 - **Bonding** - requiring the l2 sequencers post a stake every time they sequence and getting it back upon finality is reached and no misbehaviour is detected.
 
-In the context of vanilla based sequencing, the only important requirement is for such a punishment mechanism to exist in order to disincentivise the sequencers to misbehave.
+In the context of vanilla based sequencing, the only important requirement is for such a punishment mechanism to exist in order to disincentivise the sequencers to misbehave. 
+
+Ultimately, it is the rollup decision which form of punishment mechanism should be implemented. Staking can open up the possibility for the rollup to add utility to a token of their own, however it can be capital inefficient as token liquidity is taken out of circulation. Restaking, as a form of staking, can reuse the Ethereum validator stake, however it exposes the validator capital at additional risk that might not depend on the Ethereum L1 protocol, but faults of the rollup. Bonding has better capital efficiency than staking, but might require higher capital availaiblity for sequencers in order to cover for scnearious where they are elected in multiple adjacent slots.
+
 
 ### Selection Mechanics
 
